@@ -5,6 +5,14 @@ Player::Player()
 
 }
 
+Player::Player(int xBegin, int yBegin)
+	:
+	xPos(xBegin),
+	yPos(yBegin)
+{
+
+}
+
 void Player::catchedKey()
 {
 	isKey = true;

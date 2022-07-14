@@ -15,8 +15,10 @@ Map::Map(int sizeX, int sizeY, std::vector<std::string> lines)
             switch(cell.getType())
             {
             case State::HOSPITAL:
-                xPlayer = xHos = i;
-                yPlayer = yHos = (j + 1) / 2;
+                xHos = i;
+                yHos = (j + 1) / 2;
+                /*xPlayer = xHos = i;
+                yPlayer = yHos = (j + 1) / 2;*/
                 break;
             case State::PORTAL:
                 portalLinker(cell.getPortal(), i, (j + 1) / 2);
@@ -26,9 +28,18 @@ Map::Map(int sizeX, int sizeY, std::vector<std::string> lines)
     }
 }
 
+void Map::setCurrentPlayer(Player *player)
+{
+    currentPlayer = player;
+}
+
 void Map::setPos(int x, int y)
 {   
     currentString = L"";
+
+    int xPlayer = currentPlayer->getPosX();
+    int yPlayer = currentPlayer->getPosY();
+
     switch (map[yPlayer + y][xPlayer + x])
     {
     case State::WALL:
@@ -116,25 +127,17 @@ void Map::setPos(int x, int y)
             currentString += L", вас снесло";
             break;
         case State::PORTAL:
-            portalIndex += 2;
-
-            if (portalIndex > portals.size() / 2)
-            {
-                portalIndex = 0;
-            }
-
-            xPlayer = portals[portalIndex];
-            yPlayer = portals[portalIndex + 1];
-
             currentString += L", вас телепортировало дальше";
             break;
         }
 
-        if (map[yPlayer][xPlayer] == State::RIVER_END)
+        if (map[yPlayer][xPlayer] == State::RIVER_END && currentString != L"Вы в конце реки")
         {
             currentString += L", вы в конце реки";
         }
     }
+
+    currentPlayer->setPos(xPlayer, yPlayer);
 }
 
 std::wstring Map::getString()
@@ -142,19 +145,22 @@ std::wstring Map::getString()
     return currentString;
 }
 
-int Map::getPosX()
+int Map::getHosX()
 {
-    return xPlayer;
+    return xHos;
 }
 
-int Map::getPosY()
+int Map::getHosY()
 {
-    return yPlayer;
+    return yHos;
 }
 
 void Map::portalLinker(int port, int x, int y)
 {
-    
+    int number = port - 'a' - '1';
+    portals.push_back(number);
+    portals.push_back(x);
+    portals.push_back(y);
 }
 
 

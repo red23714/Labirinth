@@ -2,8 +2,10 @@
 
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 #include "Cell.h"
+#include "Player.h"
 
 class Map
 {
@@ -12,12 +14,14 @@ public:
 
 	void setPos(int, int);
 
-	int getPosX();
-	int getPosY();
+	int getHosX();
+	int getHosY();
+
+	void setCurrentPlayer(Player*);
 	
 	std::wstring getString();
 private:
-	int xPlayer, yPlayer;
+	Player *currentPlayer;
 
 	int xHos, yHos;
 
@@ -27,8 +31,7 @@ private:
 
 	std::wstring currentString;
 
-	std::vector<int> portals = {4, 3, 5, 1};
-	int portalIndex = 0;
+	std::vector<int> portals = {};
 
 	void portalLinker(int, int, int);
 };

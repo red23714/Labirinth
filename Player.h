@@ -9,6 +9,7 @@ class Player
 {
 public:
 	Player();
+	Player(int, int);
 
 	void setState(State state);
 
