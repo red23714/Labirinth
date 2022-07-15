@@ -17,8 +17,6 @@ Map::Map(int sizeX, int sizeY, std::vector<std::string> lines)
             case State::HOSPITAL:
                 xHos = i;
                 yHos = (j + 1) / 2;
-                /*xPlayer = xHos = i;
-                yPlayer = yHos = (j + 1) / 2;*/
                 break;
             case State::PORTAL:
                 portalLinker(cell.getPortal(), (j + 1) / 2, i);
@@ -34,6 +32,24 @@ Map::Map(int sizeX, int sizeY, std::vector<std::string> lines)
 void Map::setCurrentPlayer(Player *player)
 {
     currentPlayer = player;
+}
+
+void Map::setKill(int x, int y)
+{
+    int xPlayer = currentPlayer->getPosX();
+    int yPlayer = currentPlayer->getPosY();
+
+    switch (map[yPlayer + y][xPlayer + x])
+    {
+    case State::MINOTAUR:
+        std::cout << 0 << '\n';
+        map[yPlayer + y][xPlayer + x] = State::MINOTAUR_DEAD;
+        break;
+    case State::MINOTAUR_KEY:
+        std::cout << 1 << '\n';
+        map[yPlayer + y][xPlayer + x] = State::MINOTAUR_DEAD_KEY;
+        break;
+    }
 }
 
 void Map::setPos(int x, int y)
@@ -72,13 +88,17 @@ void Map::setPos(int x, int y)
 
         map[yPlayer][xPlayer] = State::SPACE;
 
+        if (inRivPor) inRivPor = false;
+
         currentString = L"Вы нашли ключ";
         break;
     case State::MINOTAUR:
+    case State::MINOTAUR_KEY:
 
         if (currentPlayer->checkKey())
         {
-            map[yPlayer + x][xPlayer + y] = State::MINOTAUR_KEY;
+            map[yPlayer + y][xPlayer + x] = State::MINOTAUR_KEY;
+            std::cout << xPlayer + x << ' ' << yPlayer + y << '\n';
         }
 
         currentPlayer->setState(State::MINOTAUR);
@@ -89,6 +109,27 @@ void Map::setPos(int x, int y)
         if (inRivPor) inRivPor = false;
 
         currentString = L"Вы оказались в больнице";
+
+        break;
+    case State::MINOTAUR_DEAD:
+        xPlayer += x;
+        yPlayer += y;
+
+        if (inRivPor) inRivPor = false;
+
+        currentString = L"Вы нашли труп минотавра";
+        break;
+    case State::MINOTAUR_DEAD_KEY:
+        xPlayer += x;
+        yPlayer += y;
+
+        currentPlayer->setState(State::KEY_UP);
+
+        map[yPlayer][xPlayer] = State::MINOTAUR_DEAD;
+
+        if (inRivPor) inRivPor = false;
+
+        currentString = L"Вы нашли труп минотавра и ключ";
         break;
     case State::EXIT:
         currentString = L"Вы нашли выход";

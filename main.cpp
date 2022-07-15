@@ -27,6 +27,9 @@ int main()
 
     bool history = false;
     bool isPush = false;
+    bool isKill = false;
+
+    std::vector<Player> players;
 
     std::string line;
     std::vector<std::string> lines;
@@ -62,8 +65,8 @@ int main()
     Player player2(map.getHosX(), map.getHosY());
 
     sf::RenderWindow window(sf::VideoMode(width, height), "Labirinth");
-    //sf::View viewText(sf::FloatRect(0.f, 0.f, 1000.f, 500.f));
-    //sf::View viewPrint(sf::FloatRect(0.f, 550.f, 1000.f, 500.f));
+
+    map.setCurrentPlayer(&player1);
 
     while (window.isOpen())
     {
@@ -75,55 +78,74 @@ int main()
 
             if (event.type == sf::Event::KeyPressed)
             {
-                map.setCurrentPlayer(&player2);
-                switch (event.key.code)
+                if (!isKill)
                 {
-                case sf::Keyboard::Escape:
-                    return 0;
-                    break;
-                case sf::Keyboard::W:
-                    map.setPos(0, -1);
-                    isPush = true;
-                    break;
-                case sf::Keyboard::D:
-                    map.setPos(1, 0);
-                    isPush = true;
-                    break;
-                case sf::Keyboard::S:
-                    map.setPos(0, 1);
-                    isPush = true;
-                    break;
-                case sf::Keyboard::A:
-                    map.setPos(-1, 0);
-                    isPush = true;
-                    break;
-                case sf::Keyboard::Up:
-                    map.setPos(0, -1);
-                    isPush = true;
-                    break;
-                case sf::Keyboard::Right:
-                    map.setPos(1, 0);
-                    isPush = true;
-                    break;
-                case sf::Keyboard::Down:
-                    map.setPos(0, 1);
-                    isPush = true;
-                    break;
-                case sf::Keyboard::Left:
-                    map.setPos(-1, 0);
-                    isPush = true;
-                    break;
-                case sf::Keyboard::H:
-                    history = !history;
-                    break;
+                    switch (event.key.code)
+                    {
+                    case sf::Keyboard::Escape:
+                        return 0;
+                        break;
+                    case sf::Keyboard::W:
+                    case sf::Keyboard::Up:
+                        map.setPos(0, -1);
+                        isPush = true;
+                        break;
+                    case sf::Keyboard::D:
+                    case sf::Keyboard::Right:
+                        map.setPos(1, 0);
+                        isPush = true;
+                        break;
+                    case sf::Keyboard::S:
+                    case sf::Keyboard::Down:
+                        map.setPos(0, 1);
+                        isPush = true;
+                        break;
+                    case sf::Keyboard::A:
+                    case sf::Keyboard::Left:
+                        map.setPos(-1, 0);
+                        isPush = true;
+                        break;
+                    case sf::Keyboard::K:
+                        isKill = true;
+                        break;
+                    case sf::Keyboard::H:
+                        history = !history;
+                        break;
+                    }
+                    if (isPush)
+                    {
+                        message.setString(map.getString());
+                        messages.push_back(message);
+                        std::cout << "Player1: " << player1.getPosX() << ' ' << player1.getPosY() << '\n';
+                        std::cout << "Player2: " << player2.getPosX() << ' ' << player2.getPosY() << '\n';
+                        isPush = false;
+                    }
                 }
-                if (isPush)
+                else
                 {
-                    message.setString(map.getString());
-                    messages.push_back(message);
-                    std::cout << "Player1: " << player1.getPosX() << ' ' << player1.getPosY() << '\n';
-                    std::cout << "Player2: " << player2.getPosX() << ' ' << player2.getPosY() << '\n';
-                    isPush = false;
+                    message.setString(L"Вы взяли нож");
+                    switch (event.key.code)
+                    {
+                    case sf::Keyboard::Up:
+                        map.setKill(0, -1);
+                        isKill = false;
+                        break;
+                    case sf::Keyboard::Right:
+                        map.setKill(1, 0);
+                        isKill = false;
+                        break;
+                    case sf::Keyboard::Down:
+                        map.setKill(0, 1);
+                        isKill = false;
+                        break;
+                    case sf::Keyboard::Left:
+                        map.setKill(-1, 0);
+                        isKill = false;
+                        break;
+                    case sf::Keyboard::K:
+                        isKill = false;
+                        break;
+                    }
                 }
             }
         }

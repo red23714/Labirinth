@@ -19,6 +19,8 @@ public:
 	int getHosY();
 
 	void setCurrentPlayer(Player*);
+
+	void setKill(int, int);
 	
 	std::wstring getString();
 private:
