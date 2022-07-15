@@ -6,6 +6,7 @@
 
 #include "Cell.h"
 #include "Player.h"
+#include "Portal.h"
 
 class Map
 {
@@ -31,7 +32,9 @@ private:
 
 	std::wstring currentString;
 
-	std::vector<int> portals = {};
+	int portIndex = 0;
+
+	std::vector<Portal> portals = {};
 
 	void portalLinker(int, int, int);
 };

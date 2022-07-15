@@ -13,6 +13,7 @@ enum class State
 	RIVER_LEFT,
 	RIVER_END,
 	MINOTAUR,
+	MINOTAUR_KEY,
 	KEY_UP,
 	WIN,
 	LOSE

@@ -21,11 +21,14 @@ Map::Map(int sizeX, int sizeY, std::vector<std::string> lines)
                 yPlayer = yHos = (j + 1) / 2;*/
                 break;
             case State::PORTAL:
-                portalLinker(cell.getPortal(), i, (j + 1) / 2);
+                portalLinker(cell.getPortal(), (j + 1) / 2, i);
                 break;
             }
         }
     }
+
+    std::sort(portals.begin(), portals.end(), [](Portal& a, Portal& b) {
+        return a.index < b.index; });
 }
 
 void Map::setCurrentPlayer(Player *player)
@@ -65,11 +68,21 @@ void Map::setPos(int x, int y)
         xPlayer += x;
         yPlayer += y;
 
+        currentPlayer->setState(State::KEY_UP);
+
         map[yPlayer][xPlayer] = State::SPACE;
 
         currentString = L"Вы нашли ключ";
         break;
     case State::MINOTAUR:
+
+        if (currentPlayer->checkKey())
+        {
+            map[yPlayer + x][xPlayer + y] = State::MINOTAUR_KEY;
+        }
+
+        currentPlayer->setState(State::MINOTAUR);
+
         xPlayer = xHos;
         yPlayer = yHos;
 
@@ -127,6 +140,22 @@ void Map::setPos(int x, int y)
             currentString += L", вас снесло";
             break;
         case State::PORTAL:
+            for (int i = 0; i < portals.size(); i++)
+            {
+                if ((i + 1) == portals.size())
+                {
+                    xPlayer = portals[0].x;
+                    yPlayer = portals[0].y;
+                    break;
+                }
+                if (xPlayer == portals[i].x && yPlayer == portals[i].y)
+                {
+                    xPlayer = portals[i + 1].x;
+                    yPlayer = portals[i + 1].y;
+                    break;
+                }
+            }
+
             currentString += L", вас телепортировало дальше";
             break;
         }
@@ -158,9 +187,11 @@ int Map::getHosY()
 void Map::portalLinker(int port, int x, int y)
 {
     int number = port - 'a' - '1';
-    portals.push_back(number);
-    portals.push_back(x);
-    portals.push_back(y);
+    Portal a;
+
+    a.index = number;
+    a.x = x;
+    a.y = y;
+
+    portals.push_back(a);
 }
-
-
