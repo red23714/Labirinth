@@ -78,13 +78,18 @@ int main()
 
             if (event.type == sf::Event::KeyPressed)
             {
+                if (event.key.code == sf::Keyboard::Escape)
+                {
+                    return 0;
+                }
+            }
+
+            if (event.type == sf::Event::KeyPressed && !map.getWin())
+            {
                 if (!isKill)
                 {
                     switch (event.key.code)
                     {
-                    case sf::Keyboard::Escape:
-                        return 0;
-                        break;
                     case sf::Keyboard::W:
                     case sf::Keyboard::Up:
                         map.setPos(0, -1);

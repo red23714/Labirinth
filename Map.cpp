@@ -132,7 +132,15 @@ void Map::setPos(int x, int y)
         currentString = L"Вы нашли труп минотавра и ключ";
         break;
     case State::EXIT:
-        currentString = L"Вы нашли выход";
+        if (currentPlayer->checkKey())
+        {
+            currentString = L"Вы выиграли";
+            isWin = true;
+        }
+        else
+        {
+            currentString = L"Вы нашли выход";
+        }
         break;
     case State::RIVER_END:
         xPlayer += x;
@@ -235,4 +243,9 @@ void Map::portalLinker(int port, int x, int y)
     a.y = y;
 
     portals.push_back(a);
+}
+
+bool Map::getWin()
+{
+    return isWin;
 }

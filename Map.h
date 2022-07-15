@@ -21,6 +21,8 @@ public:
 	void setCurrentPlayer(Player*);
 
 	void setKill(int, int);
+
+	bool getWin();
 	
 	std::wstring getString();
 private:
@@ -29,6 +31,8 @@ private:
 	int xHos, yHos;
 
 	bool inRivPor = false;
+
+	bool isWin = false;
 
 	std::vector<std::vector<State>> map;
 
