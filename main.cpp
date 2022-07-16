@@ -2,10 +2,75 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
 
 #include "State.h"
 #include "Player.h"
 #include "Map.h"
+
+const int width = 1000;
+const int height = 1000;
+
+void menu(sf::RenderWindow &window)
+{
+    sf::Texture menuTexture1, menuTexture3, menuBackground;
+    menuTexture1.loadFromFile("resources/button.png");
+    menuTexture3.loadFromFile("resources/button.png");
+    menuBackground.loadFromFile("resources/background.png");
+
+    sf::Sprite menu1(menuTexture1), menu3(menuTexture3), menuBg(menuBackground);
+
+    bool isMenu = true;
+    int menuNum = 0;
+
+    menu1.setPosition(width / 2, height / 2 + 50);
+    menu3.setPosition(width / 2, height / 2);
+    menuBg.setPosition(0, 0);
+
+    while (isMenu)
+    {
+        menu1.setColor(sf::Color(0, 51, 102));
+        menu3.setColor(sf::Color(0, 51, 102));
+
+        menuNum = 0;
+
+        window.clear(sf::Color(64, 64, 64));
+
+        if (sf::IntRect(width / 2, height / 2 + 25, 300, 50).contains(sf::Mouse::getPosition(window)))
+        {
+            menu1.setColor(sf::Color(2, 0, 63));
+            menuNum = 1;
+        }
+        if (sf::IntRect(width / 2, height / 2 + 75, 300, 50).contains(sf::Mouse::getPosition(window)))
+        {
+            menu3.setColor(sf::Color(2, 0, 63));
+            menuNum = 3;
+        }
+
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
+            if (menuNum == 1) isMenu = false;
+            if (menuNum == 3)
+            {
+                window.close();
+                isMenu = false;
+            }
+        }
+
+        window.draw(menuBg);
+        window.draw(menu1);
+        window.draw(menu3);
+
+        window.display();
+    }
+}
 
 int main()
 {   
@@ -14,9 +79,6 @@ int main()
     sf::Font font;
     if (!font.loadFromFile("resources/RobotoCondensed-Bold.ttf"))
         return EXIT_FAILURE;
-
-    const int width = 1000;
-    const int height = 1000;
 
     sf::Text message;
     std::vector<sf::Text> messages;
@@ -28,8 +90,6 @@ int main()
     bool history = false;
     bool isPush = false;
     bool isKill = false;
-
-    std::vector<Player> players;
 
     std::string line;
     std::vector<std::string> lines;
@@ -61,12 +121,22 @@ int main()
 
     Map map(sizeX, sizeY, lines);
 
-    Player player1(map.getHosX(), map.getHosY());
-    Player player2(map.getHosX(), map.getHosY());
+    std::vector<Player> players;
+    int count = 0;
+    std::cin >> count;
+
+    int turn = 0;
+
+    for (int i = 0; i < count; i++)
+    {
+        Player player(map.getHosX(), map.getHosY());
+        players.push_back(player);
+    }
 
     sf::RenderWindow window(sf::VideoMode(width, height), "Labirinth");
+    menu(window);
 
-    map.setCurrentPlayer(&player1);
+    map.setCurrentPlayer(&players[turn]);
 
     while (window.isOpen())
     {
@@ -119,16 +189,21 @@ int main()
                     }
                     if (isPush)
                     {
-                        message.setString(map.getString());
+                        std::wstring turnS = L"Player " + std::to_wstring(turn + 1) + L':';
+                        message.setString(turnS + map.getString());
                         messages.push_back(message);
-                        std::cout << "Player1: " << player1.getPosX() << ' ' << player1.getPosY() << '\n';
-                        std::cout << "Player2: " << player2.getPosX() << ' ' << player2.getPosY() << '\n';
+                        std::cout << turn << ' ' << players[turn].getPosX() << ' ' << players[turn].getPosY() << '\n';
                         isPush = false;
+
+                        if (turn != count - 1) turn++;
+                        else turn = 0;
+
+                        map.setCurrentPlayer(&players[turn]);
                     }
                 }
                 else
                 {
-                    message.setString(L"Вы взяли нож");
+                    message.setString(L"Вы пырнули ножом");
                     switch (event.key.code)
                     {
                     case sf::Keyboard::Up:
@@ -149,6 +224,7 @@ int main()
                         break;
                     case sf::Keyboard::K:
                         isKill = false;
+                        message.setString(L"Вы убрали нож");
                         break;
                     }
                 }
