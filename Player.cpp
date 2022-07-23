@@ -5,10 +5,11 @@ Player::Player()
 
 }
 
-Player::Player(int xBegin, int yBegin)
+Player::Player(int xBegin, int yBegin, std::wstring name)
 	:
 	xPos(xBegin),
-	yPos(yBegin)
+	yPos(yBegin),
+	name(name)
 {
 
 }
@@ -33,12 +34,23 @@ void Player::setState(State state)
 	switch (state)
 	{
 	case State::MINOTAUR:
+		currentString = L"Вы умерли";
 		dead();
 		break;
 	case State::KEY_UP:
 		catchedKey();
 		break;
 	}
+}
+
+void Player::setString(std::wstring string)
+{
+	currentString = string;
+}
+
+std::wstring Player::getString()
+{
+	return currentString;
 }
 
 void Player::setPos(int x, int y)

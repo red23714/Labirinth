@@ -11,16 +11,25 @@
 class Map
 {
 public:
+	std::vector<Player*> players;
 	Map(int, int, std::vector<std::string>);
 
 	void setPos(int, int);
+
+	State getState(int, int);
 
 	int getHosX();
 	int getHosY();
 
 	void setCurrentPlayer(Player*);
+	void setPlayers(std::vector<Player> *);
 
-	void setKill(int, int);
+	void spear(int);
+
+	void skip();
+	void dead();
+
+	void knife();
 
 	bool getWin();
 	
@@ -29,8 +38,6 @@ private:
 	Player *currentPlayer;
 
 	int xHos, yHos;
-
-	bool inRivPor = false;
 
 	bool isWin = false;
 

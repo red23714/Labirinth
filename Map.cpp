@@ -29,26 +29,72 @@ Map::Map(int sizeX, int sizeY, std::vector<std::string> lines)
         return a.index < b.index; });
 }
 
+void Map::setPlayers(std::vector<Player> *ps)
+{
+    for (int i = 0; i < (*ps).size(); i++)
+    {
+        players.push_back(&(*ps)[i]);
+    }
+}
+
 void Map::setCurrentPlayer(Player *player)
 {
     currentPlayer = player;
 }
 
-void Map::setKill(int x, int y)
+void Map::spear(int dir)
 {
-    int xPlayer = currentPlayer->getPosX();
-    int yPlayer = currentPlayer->getPosY();
+    int xSpear = currentPlayer->getPosX();
+    int ySpear = currentPlayer->getPosY();
 
-    switch (map[yPlayer + y][xPlayer + x])
+    currentPlayer->spearCount--;
+
+    currentPlayer->setString(L"Вы кинули копьё");
+
+    while (map[ySpear][xSpear] != State::WALL && map[ySpear][xSpear] != State::EXIT)
     {
-    case State::MINOTAUR:
-        std::cout << 0 << '\n';
-        map[yPlayer + y][xPlayer + x] = State::MINOTAUR_DEAD;
-        break;
-    case State::MINOTAUR_KEY:
-        std::cout << 1 << '\n';
-        map[yPlayer + y][xPlayer + x] = State::MINOTAUR_DEAD_KEY;
-        break;
+        if (map[ySpear][xSpear] == State::MINOTAUR)
+        {
+            map[ySpear][xSpear] = State::MINOTAUR_DEAD;
+            break;
+        }
+        if (map[ySpear][xSpear] == State::MINOTAUR_KEY)
+        {
+            map[ySpear][xSpear] = State::MINOTAUR_DEAD_KEY;
+            break;
+        }
+
+        for (int i = 0; i < players.size(); i++)
+        {
+            if (xSpear == players[i]->getPosX() && ySpear == players[i]->getPosY()
+                && players[i]->name != currentPlayer->name)
+            {
+                players[i]->setState(State::MINOTAUR);
+
+                players[i]->setPos(xHos, yHos);
+
+                if (players[i]->inRivPor) players[i]->inRivPor = false;
+
+                return;
+            }
+        }
+
+        switch (dir)
+        {
+        case 1:
+            ySpear--;
+            break;
+        case 2:
+            xSpear++;
+            break;
+        case 3:
+            ySpear++;
+            break;
+        case 4:
+            xSpear--;
+            break;
+        }
+        std::cout << currentPlayer->spearCount << ' ' << xSpear << ' ' << ySpear << '\n';
     }
 }
 
@@ -68,7 +114,7 @@ void Map::setPos(int x, int y)
         xPlayer += x;
         yPlayer += y;
 
-        if (inRivPor) inRivPor = false;
+        if (currentPlayer->inRivPor) currentPlayer->inRivPor = false;
 
         currentString = L"Вы прошли дальше";
         break;
@@ -76,9 +122,9 @@ void Map::setPos(int x, int y)
         xPlayer += x;
         yPlayer += y;
 
-        if (inRivPor) inRivPor = false;
+        if (currentPlayer->inRivPor) currentPlayer->inRivPor = false;
 
-        currentString = L"Вы прошли дальше";
+        currentString = L"Вы прошли дальше и оказались в больнице";
         break;
     case State::KEY_UP:
         xPlayer += x;
@@ -88,7 +134,7 @@ void Map::setPos(int x, int y)
 
         map[yPlayer][xPlayer] = State::SPACE;
 
-        if (inRivPor) inRivPor = false;
+        if (currentPlayer->inRivPor) currentPlayer->inRivPor = false;
 
         currentString = L"Вы нашли ключ";
         break;
@@ -98,7 +144,6 @@ void Map::setPos(int x, int y)
         if (currentPlayer->checkKey())
         {
             map[yPlayer + y][xPlayer + x] = State::MINOTAUR_KEY;
-            std::cout << xPlayer + x << ' ' << yPlayer + y << '\n';
         }
 
         currentPlayer->setState(State::MINOTAUR);
@@ -106,16 +151,16 @@ void Map::setPos(int x, int y)
         xPlayer = xHos;
         yPlayer = yHos;
 
-        if (inRivPor) inRivPor = false;
+        if (currentPlayer->inRivPor) currentPlayer->inRivPor = false;
 
-        currentString = L"Вы оказались в больнице";
+        currentString = L"Вы умерли и оказались в больнице";
 
         break;
     case State::MINOTAUR_DEAD:
         xPlayer += x;
         yPlayer += y;
 
-        if (inRivPor) inRivPor = false;
+        if (currentPlayer->inRivPor) currentPlayer->inRivPor = false;
 
         currentString = L"Вы нашли труп минотавра";
         break;
@@ -127,7 +172,7 @@ void Map::setPos(int x, int y)
 
         map[yPlayer][xPlayer] = State::MINOTAUR_DEAD;
 
-        if (inRivPor) inRivPor = false;
+        if (currentPlayer->inRivPor) currentPlayer->inRivPor = false;
 
         currentString = L"Вы нашли труп минотавра и ключ";
         break;
@@ -146,13 +191,15 @@ void Map::setPos(int x, int y)
         xPlayer += x;
         yPlayer += y;
 
+        currentPlayer->inRivPor = false;
+
         currentString = L"Вы в конце реки";
         break;
     case State::PORTAL:
         xPlayer += x;
         yPlayer += y;
 
-        inRivPor = true;
+        currentPlayer->inRivPor = true;
 
         currentString = L"Вы попали в портал";
         break;
@@ -164,11 +211,11 @@ void Map::setPos(int x, int y)
         yPlayer += y;
 
         currentString = L"Вы в реке";
-        inRivPor = true;
+        currentPlayer->inRivPor = true;
         break;
     }
 
-    if (inRivPor)
+    if (currentPlayer->inRivPor)
     {
         switch (map[yPlayer][xPlayer])
         {
@@ -216,11 +263,17 @@ void Map::setPos(int x, int y)
     }
 
     currentPlayer->setPos(xPlayer, yPlayer);
+    currentPlayer->setString(currentString);
+}
+
+State Map::getState(int x, int y)
+{
+    return map[x][y];
 }
 
 std::wstring Map::getString()
 {
-    return currentString;
+    return currentPlayer->getString();
 }
 
 int Map::getHosX()
@@ -243,6 +296,109 @@ void Map::portalLinker(int port, int x, int y)
     a.y = y;
 
     portals.push_back(a);
+}
+
+void Map::knife()
+{
+    int xPlayer = currentPlayer->getPosX();
+    int yPlayer = currentPlayer->getPosY();
+
+    for (int i = 0; i < players.size(); i++)
+    {
+        if (xPlayer == players[i]->getPosX() && yPlayer == players[i]->getPosY() 
+            && players[i]->name != currentPlayer->name)
+        {
+            if (players[i]->checkKey())
+            {
+                map[yPlayer][xPlayer] = State::KEY_UP;
+            }
+
+            players[i]->setState(State::MINOTAUR);
+
+            players[i]->setPos(xHos, yHos);
+
+            if (players[i]->inRivPor) players[i]->inRivPor = false;
+        }
+    }
+
+    currentPlayer->setString(L"Вы пырнули ножом");
+}
+
+void Map::skip()
+{
+    currentString = L"Вы пропускаете ход";
+
+    if (currentPlayer->inRivPor)
+    {
+        int xPlayer = currentPlayer->getPosX();
+        int yPlayer = currentPlayer->getPosY();
+        switch (map[yPlayer][xPlayer])
+        {
+        case State::RIVER_UP:
+            yPlayer--;
+            currentString += L", вас снесло";
+            break;
+        case State::RIVER_RIGHT:
+            xPlayer++;
+            currentString += L", вас снесло";
+            break;
+        case State::RIVER_DOWN:
+            yPlayer++;
+            currentString += L", вас снесло";
+            break;
+        case State::RIVER_LEFT:
+            xPlayer--;
+            currentString += L", вас снесло";
+            break;
+        case State::PORTAL:
+            for (int i = 0; i < portals.size(); i++)
+            {
+                if ((i + 1) == portals.size())
+                {
+                    xPlayer = portals[0].x;
+                    yPlayer = portals[0].y;
+                    break;
+                }
+                if (xPlayer == portals[i].x && yPlayer == portals[i].y)
+                {
+                    xPlayer = portals[i + 1].x;
+                    yPlayer = portals[i + 1].y;
+                    break;
+                }
+            }
+
+            currentString += L", вас телепортировало дальше";
+            break;
+        }
+
+        if (map[yPlayer][xPlayer] == State::RIVER_END && currentString != L"Вы в конце реки")
+        {
+            currentString += L", вы в конце реки";
+        }
+
+        currentPlayer->setPos(xPlayer, yPlayer);
+        currentPlayer->setString(currentString);
+    }
+}
+
+void Map::dead()
+{
+    int xPlayer = currentPlayer->getPosX();
+    int yPlayer = currentPlayer->getPosY();
+
+    if (currentPlayer->checkKey())
+    {
+        map[yPlayer][xPlayer] = State::KEY_UP;
+    }
+
+    currentPlayer->setState(State::MINOTAUR);
+
+    xPlayer = xHos;
+    yPlayer = yHos;
+
+    currentPlayer->setPos(xPlayer, yPlayer);
+
+    currentPlayer->setString(L"Вы совершили самоубийство и оказались в больнице");
 }
 
 bool Map::getWin()
