@@ -83,7 +83,8 @@ bool checkName(std::wstring name, std::vector<Player> players)
     return false;
 }
 
-void replay(Map *map, std::wstring pName, std::vector<std::string> lines, sf::RenderWindow &window, sf::Font font)
+void replay(Map *map, std::wstring pName, std::vector<std::string> lines, 
+    sf::RenderWindow &window, sf::Font font)
 {
     std::ifstream in(pName);
 
@@ -171,10 +172,13 @@ void replay(Map *map, std::wstring pName, std::vector<std::string> lines, sf::Re
         }
 
         window.clear();
+
         int posOfScreen = 0;
+
         newMap = lines;
         newMap[player.getPosY()][player.getPosX()*2] = 'P';
         newMap[player.getPosY()][(player.getPosX())*2 + 1] = 'P';
+
         for (int i = 0; i < lines.size(); i++)
         {
             std::cout << newMap[i] << '\n';
@@ -437,7 +441,8 @@ int main()
                     if (turn >= players.size() - 1) currentPlayer = 0;
                     else currentPlayer = turn + 1;
 
-                    std::wstring currentTurn = L"Ход игрока " + players[currentPlayer].name + L'\n';
+                    std::wstring currentTurn = L"Ход игрока " + players[currentPlayer].name +
+                        players[currentPlayer].deadnt + L'\n';
                     std::wstring turnS = currButt + players[turn].name + L": ";
                     message.setString(currentTurn + turnS + players[turn].getString());
                     messages[turn].push_back(turnS + map.getString());

@@ -11,7 +11,11 @@
 class Map
 {
 public:
+	int sizeX = 0;
+	int sizeY = 0;
+
 	std::vector<Player*> players;
+
 	Map(int, int, std::vector<std::string>);
 
 	void setPos(int, int);

@@ -29,6 +29,8 @@ public:
 
 	int spearCount = 3;
 
+	std::wstring deadnt = L"";
+
 private:
 	std::wstring currentString = L"";
 

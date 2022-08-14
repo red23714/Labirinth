@@ -1,6 +1,9 @@
 #include "Map.h"
 
 Map::Map(int sizeX, int sizeY, std::vector<std::string> lines)
+    :
+    sizeX(sizeX),
+    sizeY(sizeY)
 {
     map.resize(sizeY);
 
@@ -72,6 +75,8 @@ void Map::spear(int dir)
                 players[i]->setState(State::MINOTAUR);
 
                 players[i]->setPos(xHos, yHos);
+
+                players[i]->deadnt = L", который умер на предыдущем ходу";
 
                 if (players[i]->inRivPor) players[i]->inRivPor = false;
 
@@ -262,6 +267,7 @@ void Map::setPos(int x, int y)
         }
     }
 
+    currentPlayer->deadnt = L"";
     currentPlayer->setPos(xPlayer, yPlayer);
     currentPlayer->setString(currentString);
 }
@@ -316,6 +322,8 @@ void Map::knife()
             players[i]->setState(State::MINOTAUR);
 
             players[i]->setPos(xHos, yHos);
+
+            players[i]->deadnt = L", который умер на предыдущем ходу";
 
             if (players[i]->inRivPor) players[i]->inRivPor = false;
         }
