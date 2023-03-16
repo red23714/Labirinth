@@ -7,25 +7,51 @@
 #include "Player.h"
 #include "Map.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
-const int width = 1000;
-const int height = 1000;
+const int width = 1920;
+const int height = 1080;
 
 void menu(sf::RenderWindow &window)
 {
+    sf::Font font;
+    if (!font.loadFromFile("resources/RobotoMono-Light.ttf"))
+    {
+        return;
+    }
+
+    sf::Text startButText, exitButText;
     sf::Texture menuTexture1, menuTexture3, menuBackground;
+
+    int posWm, posHm1, posHm2;
+
+    posWm = width / 2 - 100;
+    posHm1 = height / 2 + 90;
+    posHm2 = height / 2;
+
+    startButText.setFont(font);
+    startButText.setCharacterSize(35);
+    startButText.setPosition(posWm + 55, posHm2 + 8);
+    startButText.setFillColor(sf::Color::White);
+    startButText.setString("Start");
+
+    exitButText.setFont(font);
+    exitButText.setCharacterSize(35);
+    exitButText.setPosition(posWm + 65, posHm1 + 8);
+    exitButText.setFillColor(sf::Color::White);
+    exitButText.setString("Exit");
+
     menuTexture1.loadFromFile("resources/button.png");
     menuTexture3.loadFromFile("resources/button.png");
-    menuBackground.loadFromFile("resources/background.png");
+    menuBackground.loadFromFile("resources/background.jpg");
 
     sf::Sprite menu1(menuTexture1), menu3(menuTexture3), menuBg(menuBackground);
 
     bool isMenu = true;
     int menuNum = 0;
 
-    menu1.setPosition(width / 2, height / 2 + 50);
-    menu3.setPosition(width / 2, height / 2);
+    menu1.setPosition(posWm, posHm1);
+    menu3.setPosition(posWm, posHm2);
     menuBg.setPosition(0, 0);
 
     while (isMenu)
@@ -37,15 +63,15 @@ void menu(sf::RenderWindow &window)
 
         window.clear(sf::Color(64, 64, 64));
 
-        if (sf::IntRect(width / 2, height / 2 + 25, 300, 50).contains(sf::Mouse::getPosition(window)))
+        if (sf::IntRect(posWm, posHm1, 210, 60).contains(sf::Mouse::getPosition(window)))
         {
-            menu1.setColor(sf::Color(2, 0, 63));
-            menuNum = 1;
-        }
-        if (sf::IntRect(width / 2, height / 2 + 75, 300, 50).contains(sf::Mouse::getPosition(window)))
-        {
-            menu3.setColor(sf::Color(2, 0, 63));
+            menu1.setColor(sf::Color(100, 0, 0)); //menu1.setColor(sf::Color(2, 0, 63));
             menuNum = 3;
+        }
+        if (sf::IntRect(posWm, posHm2, 210, 60).contains(sf::Mouse::getPosition(window)))
+        {
+            menu3.setColor(sf::Color(100, 0, 0));
+            menuNum = 1;
         }
 
         sf::Event event;
@@ -68,6 +94,9 @@ void menu(sf::RenderWindow &window)
         window.draw(menuBg);
         window.draw(menu1);
         window.draw(menu3);
+
+        window.draw(startButText);
+        window.draw(exitButText);
 
         window.display();
     }
@@ -169,6 +198,14 @@ void replay(Map *map, std::wstring pName, std::vector<std::string> lines,
                 window.close();
                 return;
             }
+
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::Escape)
+                {
+                    window.close();
+                }
+            }
         }
 
         window.clear();
@@ -209,11 +246,11 @@ int main()
     sf::Text historyMessage;
     std::vector < std::vector<std::wstring> > messages;
     message.setFont(font);
-    message.setCharacterSize(25);
+    message.setCharacterSize(35);
     message.setPosition(0.f, 0.f);
     message.setFillColor(sf::Color::White);
     historyMessage.setFont(font);
-    historyMessage.setCharacterSize(25);
+    historyMessage.setCharacterSize(35);
     historyMessage.setPosition(0.f, 0.f);
     historyMessage.setFillColor(sf::Color::White);
 
@@ -297,7 +334,7 @@ int main()
         players.push_back(player);
     }
 
-    sf::RenderWindow window(sf::VideoMode(width, height), "Labirinth");
+    sf::RenderWindow window(sf::VideoMode(width, height), "Labirinth", sf::Style::Fullscreen);
     if (!DEBUG)
     {
         menu(window);
@@ -494,8 +531,8 @@ int main()
 
                 for (int i = 0; i < messages[historyTurn].size(); i++)
                 {
-                    int print = i * 25.f;
-                    print -= offset * 25.f;
+                    int print = i * 35.f;
+                    print -= offset * 35.f;
 
                     historyMessage.setString(messages[turn][i]);
                     historyMessage.setPosition(0.f, print);

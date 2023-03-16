@@ -1,0 +1,32 @@
+﻿  Скопировано файлов:         1.
+  Скопировано файлов:         1.
+  Скопировано файлов:         1.
+  Скопировано файлов:         1.
+  Скопировано файлов:         1.
+  Скопировано файлов:         1.
+  Подпапка или файл C:\Users\Cooal\Documents\C++\SFML\Labirint\x64\Release Dynamic\resources уже существует.
+  C:\Users\Cooal\Documents\C++\SFML\Labirint\resources\1.txt
+  C:\Users\Cooal\Documents\C++\SFML\Labirint\resources\background.jpg
+  C:\Users\Cooal\Documents\C++\SFML\Labirint\resources\button.png
+  C:\Users\Cooal\Documents\C++\SFML\Labirint\resources\Red.txt
+  C:\Users\Cooal\Documents\C++\SFML\Labirint\resources\RobotoMono-Light.ttf
+  Скопировано файлов:         5.
+  main.cpp
+c:\users\cooal\documents\c++\sfml\labirint\main.cpp(34): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\cooal\documents\c++\sfml\labirint\main.cpp(40): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\cooal\documents\c++\sfml\labirint\main.cpp(53): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\cooal\documents\c++\sfml\labirint\main.cpp(54): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\cooal\documents\c++\sfml\labirint\main.cpp(223): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\cooal\documents\c++\sfml\labirint\main.cpp(225): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\cooal\documents\c++\sfml\labirint\main.cpp(272): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\cooal\documents\c++\sfml\labirint\main.cpp(298): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+c:\users\cooal\documents\c++\sfml\labirint\main.cpp(299): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+c:\users\cooal\documents\c++\sfml\labirint\main.cpp(534): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\cooal\documents\c++\sfml\labirint\main.cpp(535): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+c:\users\cooal\documents\c++\sfml\labirint\main.cpp(538): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Generating code
+  1 of 1070 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    5 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Labirint.vcxproj -> C:\Users\Cooal\Documents\C++\SFML\Labirint\x64\Release Dynamic\Labirint.exe
